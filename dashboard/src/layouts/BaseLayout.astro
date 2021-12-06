@@ -1,0 +1,23 @@
+<style>
+    body {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    aside {
+        height: 100%;
+        background-color: hsl(0, 0%, 80%);
+    }
+</style>
+<html>
+    <head>
+        <title>Hello world</title>
+    </head>
+    <body>
+        <aside>
+            <slot name="side-nav"></slot>
+        </aside>
+        <slot name="main"></slot>
+    </body>
+</html>
