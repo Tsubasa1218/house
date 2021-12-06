@@ -1,0 +1,2 @@
+[global.databases]
+house_db = { url = "../db/house.db" }
