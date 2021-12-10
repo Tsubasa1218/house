@@ -1,40 +1,33 @@
-pub mod print_test {
-    use crate::domains;
-    use crate::HouseDBConn;
-    use rocket_contrib::databases::rusqlite;
+use crate::domains;
+use crate::HouseDBConn;
+use rocket_contrib::json::Json;
 
-    #[get("/")]
-    pub fn index(conn: HouseDBConn) -> rusqlite::Result<String> {
-        let result = domains::select(
-            &*conn,
-            domains::SimpleSelect {
-                table: "test",
-                fields: vec!["rowid", "name"],
-            },
-        )?;
+#[derive(Serialize)]
+pub struct MeasureTypesResponse {
+    pub value: Vec<domains::measure_type::MeasureType>,
+    pub error: &'static str,
+}
 
-        let mut response = String::from("[");
-
-        for r in result {
-            response.push('{');
-
-            for (key, value) in r {
-                let value_value = match value {
-                    rusqlite::types::Value::Text(s) => s,
-                    rusqlite::types::Value::Integer(i) => i.to_string(),
-                    _=> String::new()
-                } ;
-                response.push_str(&key);
-                response.push_str(": ");
-                response.push_str(value_value.as_str());
-                response.push_str(", ");
-            }
-
-            response.push_str("}, ");
-        }
-
-        response.push(']');
-
-        Ok(response)
+#[get("/measure_types")]
+pub fn measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
+    let result = domains::measure_type::select_measure_types(&*conn);
+    match result {
+        Ok(measures) => Json(MeasureTypesResponse {
+            value: measures,
+            error: "",
+        }),
+        _ => Json(MeasureTypesResponse {
+            value: vec![],
+            error: "There was an error :(",
+        }),
     }
 }
+
+//#[get("/measures")]
+//pub fn measures(conn: HouseDBConn) {
+//}
+//
+//
+//#[post("/measure")]
+//pub fn measures(conn: HouseDBConn) {
+//}

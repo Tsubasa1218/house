@@ -1,42 +1,25 @@
-use rocket_contrib::databases::rusqlite;
+pub mod measure_type {
+    use rocket_contrib::databases::rusqlite;
 
-pub trait SelectBuilder {
-    fn build_query(&self) -> String;
-}
-
-pub struct SimpleSelect {
-    pub table: &'static str,
-    pub fields: Vec<&'static str>,
-}
-
-impl SelectBuilder for SimpleSelect {
-    fn build_query(&self) -> String {
-        format!("SELECT {} FROM {};", self.fields.join(", "), self.table)
+    #[derive(Debug, Serialize)]
+    pub struct MeasureType {
+        id: isize,
+        name: String,
     }
-}
 
-pub fn select(
-    conn: &rusqlite::Connection,
-    sql_select: SimpleSelect,
-) -> rusqlite::Result<Vec<Vec<(String, rusqlite::types::Value)>>> {
-    let query = sql_select.build_query();
-    let mut stmt = conn.prepare(query.as_str())?;
-    let names = stmt.column_names().into_iter().map(|s| String::from(s)).collect::<Vec<_>>();
+    pub fn select_measure_types(conn: &rusqlite::Connection) -> rusqlite::Result<Vec<MeasureType>> {
+        let mut stmt = conn.prepare("SELECT rowid, name FROM measure_type")?;
+        let rows = stmt.query_map(&[], |row| MeasureType {
+            id: row.get(0),
+            name: row.get(1),
+        })?;
 
-    let mut rows = stmt.query(&[])?;
+        let mut measure_types = Vec::new();
 
-    let mut result = Vec::new();
-
-    while let Some(row) = rows.next() {
-        let row = row.unwrap();
-
-        let mut all_columns = Vec::new();
-        for name in names.iter() {
-            all_columns.push((name.clone(), row.get::<_, rusqlite::types::Value>(name.as_ref())));
+        for row in rows {
+            measure_types.push(row?);
         }
 
-        result.push(all_columns);
+        Ok(measure_types)
     }
-
-    Ok(result)
 }

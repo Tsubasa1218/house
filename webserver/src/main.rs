@@ -3,20 +3,20 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+#[macro_use]
+extern crate serde_derive;
 
 use rocket_contrib::databases::rusqlite;
 
 #[database("house_db")]
 pub struct HouseDBConn(rusqlite::Connection);
 
-use actions::print_test;
 mod actions;
-
 mod domains;
 
 fn main() {
     rocket::ignite()
         .attach(HouseDBConn::fairing())
-        .mount("/", routes![print_test::index])
+        .mount("/", routes![actions::measure_types])
         .launch();
 }
