@@ -17,6 +17,9 @@ mod domains;
 fn main() {
     rocket::ignite()
         .attach(HouseDBConn::fairing())
-        .mount("/", routes![actions::measure_types])
+        .mount(
+            "/",
+            routes![actions::get_measure_types, actions::post_measures],
+        )
         .launch();
 }

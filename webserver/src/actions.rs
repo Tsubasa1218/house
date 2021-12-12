@@ -9,7 +9,7 @@ pub struct MeasureTypesResponse {
 }
 
 #[get("/measure_types")]
-pub fn measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
+pub fn get_measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
     let result = domains::measure_type::select_measure_types(&*conn);
     match result {
         Ok(measures) => Json(MeasureTypesResponse {
@@ -23,11 +23,21 @@ pub fn measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
     }
 }
 
-//#[get("/measures")]
-//pub fn measures(conn: HouseDBConn) {
+//#[get("/measures?<start>&<end>")]
+//pub fn measures(conn: HouseDBConn, start_date: Option<String>, end_date: Option<String>) {
 //}
-//
-//
-//#[post("/measure")]
-//pub fn measures(conn: HouseDBConn) {
-//}
+
+#[derive(Debug, Deserialize)]
+pub struct MeasureRecord<'a> {
+    pub wifi: &'a str,
+    pub chip: &'a str,
+    pub pm02: u32,
+    pub rco2: u32,
+    pub atmp: f32,
+    pub rhum: u32,
+}
+
+#[post("/measures", data = "<measure>")]
+pub fn post_measures(conn: HouseDBConn, measure: Json<MeasureRecord>) {
+    domains::measures::insert_measurement(&conn, measure);
+}
