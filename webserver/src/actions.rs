@@ -1,5 +1,6 @@
 use crate::domains;
 use crate::HouseDBConn;
+use rocket::http::Status;
 use rocket_contrib::json::Json;
 
 #[derive(Serialize)]
@@ -28,9 +29,7 @@ pub fn get_measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
 //}
 
 #[derive(Debug, Deserialize)]
-pub struct MeasureRecord<'a> {
-    pub wifi: &'a str,
-    pub chip: &'a str,
+pub struct MeasureRecord {
     pub pm02: u32,
     pub rco2: u32,
     pub atmp: f32,
@@ -38,6 +37,9 @@ pub struct MeasureRecord<'a> {
 }
 
 #[post("/measures", data = "<measure>")]
-pub fn post_measures(conn: HouseDBConn, measure: Json<MeasureRecord>) {
-    domains::measures::insert_measurement(&conn, measure);
+pub fn post_measures(conn: HouseDBConn, measure: Json<MeasureRecord>) -> Status {
+    match domains::measures::insert_measurement(&conn, measure) {
+        Ok(_) => Status::Created,
+        _ => Status::InternalServerError,
+    }
 }

@@ -27,34 +27,49 @@ pub mod measure_type {
 pub mod measures {
     use super::measure_type;
     use crate::actions;
+    use chrono::{DateTime, Utc};
     use rocket_contrib::databases::rusqlite;
     use rocket_contrib::json::Json;
     use std::time;
-    use chrono::{DateTime, Utc};
+
+    fn current_date() -> String {
+        let system_time = time::SystemTime::now();
+        let date_time: DateTime<Utc> = system_time.into();
+
+        date_time.to_rfc3339()
+    }
 
     pub fn insert_measurement(
         conn: &rusqlite::Connection,
         measure_json: Json<actions::MeasureRecord>,
     ) -> rusqlite::Result<()> {
         let measure_types = measure_type::select_measure_types(&conn)?;
-        let system_time = time::SystemTime::now();
-        let date_time : DateTime<Utc>= system_time.into().format("%+");
 
-        let measure = measure_json.into_inner();
-
-        let stmt = conn.prepare(
+        let mut stmt = conn.prepare(
             "INSERT INTO measure (time, measure, measure_type_id) VALUES (:time, :measure, :measure_type)"
         )?;
 
-        let types_iter = measure_types.iter();
+        let measure = measure_json.into_inner();
+        let measure_key_tuples = measure_types
+            .iter()
+            .map(|m_type| match m_type.name.as_str() {
+                "pm2.5" => (m_type.id, measure.pm02.to_string()),
+                "co2" => (m_type.id, measure.rco2.to_string()),
+                "temperature" => (m_type.id, measure.atmp.to_string()),
+                "humidity" => (m_type.id, measure.rhum.to_string()),
+                _ => (-1, String::new()),
+            });
 
-        let pm_id = match types_iter.find(|&&m_type| m_type.name == "pm2.5") {
-            Some(measure_type) => measure_type.id,
-            _ => -1,
-        };
+        let date_time = current_date();
 
-        if pm_id != -1 {
-            stmt.execute_named(&[(":time", &date_time), ("measure", &measure.pm02), ("measure_id", &pm_id)])?;
+        for (measure_type_id, measure_value) in measure_key_tuples {
+            if measure_type_id != -1 {
+                stmt.execute_named(&[
+                    (":time", &date_time),
+                    (":measure", &measure_value),
+                    (":measure_type", &measure_type_id),
+                ])?;
+            }
         }
 
         Ok(())
