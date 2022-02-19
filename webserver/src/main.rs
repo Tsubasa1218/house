@@ -19,7 +19,11 @@ fn main() {
         .attach(HouseDBConn::fairing())
         .mount(
             "/",
-            routes![actions::get_measure_types, actions::post_measures],
+            routes![
+                actions::get_measure_types,
+                actions::post_measures,
+                actions::get_measures
+            ],
         )
         .launch();
 }

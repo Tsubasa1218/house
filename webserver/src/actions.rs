@@ -24,9 +24,28 @@ pub fn get_measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
     }
 }
 
-//#[get("/measures?<start>&<end>")]
-//pub fn measures(conn: HouseDBConn, start_date: Option<String>, end_date: Option<String>) {
-//}
+#[derive(Serialize)]
+pub struct MeasuresResponse {
+    pub value: Vec<domains::measures::MeasureValue>,
+    pub error: &'static str,
+}
+#[get("/measures?<start>&<end>")]
+pub fn get_measures(
+    conn: HouseDBConn,
+    start: Option<String>,
+    end: Option<String>,
+) -> Json<MeasuresResponse> {
+    match domains::measures::select_measures(&conn, start, end) {
+        Ok(measures) => Json(MeasuresResponse {
+            value: measures,
+            error: "",
+        }),
+        _ => Json(MeasuresResponse {
+            value: vec![],
+            error: "There was an error :(",
+        }),
+    }
+}
 
 #[derive(Debug, Deserialize)]
 pub struct MeasureRecord {

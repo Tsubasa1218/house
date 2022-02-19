@@ -74,4 +74,41 @@ pub mod measures {
 
         Ok(())
     }
+
+    #[derive(Debug, Serialize)]
+    pub struct MeasureValue {
+        pub measure: f64,
+        pub name: String,
+        pub time: String,
+    }
+
+    pub fn select_measures(
+        conn: &rusqlite::Connection,
+        start_date: Option<String>,
+        end_date: Option<String>,
+    ) -> rusqlite::Result<Vec<MeasureValue>> {
+        let mut stmt = conn.prepare(
+            "SELECT measure, measure_type.name, time 
+            FROM measure 
+            INNER JOIN measure_type ON measure_type.rowid = measure.measure_type_id
+            WHERE time BETWEEN :start_date AND :end_date",
+        )?;
+
+        let rows = stmt.query_map_named(
+            &[(":start_date", &start_date), (":end_date", &end_date)],
+            |row| MeasureValue {
+                measure: row.get(0),
+                name: row.get(1),
+                time: row.get(2),
+            },
+        )?;
+
+        let mut measures = Vec::new();
+
+        for row in rows {
+            measures.push(row?);
+        }
+
+        Ok(measures)
+    }
 }
