@@ -1,7 +1,8 @@
 <script>
+import '@fortawesome/fontawesome-free/css/all.min.css'
   import { onMount } from "svelte";
 
-  let selected = false;
+  let darkMode = false;
 
   onMount(() => {
     const initialTheme = window.matchMedia("prefers-color-scheme: dark")
@@ -10,20 +11,20 @@
 
     document.body.classList += initialTheme;
 
-    selected = initialTheme === "dark";
+    darkMode = initialTheme === "dark";
   });
 
   function flip() {
-    const currentTheme = selected ? "dark" : "light";
+    const currentTheme = darkMode ? "dark" : "light";
 
-    selected = !selected;
+    darkMode = !darkMode;
 
-    document.body.classList.replace(currentTheme, selected ? "dark" : "light");
+    document.body.classList.replace(currentTheme, darkMode ? "dark" : "light");
   }
 </script>
 
-<button id="svelte" on:click={flip} role="switch" aria-checked={selected}>
-  {selected ? "🌙" : "🔆"}
+<button id="svelte" on:click={flip} role="switch" aria-checked={darkMode}>
+  <i class={darkMode ? "fa-solid fa-moon" : "fa-solid fa-sun"} />
 </button>
 
 <style>

@@ -1,88 +1,23 @@
 ---
-import ThemeToggle from '../components/ThemeToggle.svelte'
+import ThemeToggle from '../components/ThemeToggle.svelte';
+
 ---
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Juan!</title>
 
-<style>
-    .centered {
-        margin: 0 auto;
-        max-width: 70ch;
-    }
+	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    body {
-        height: 100vh;
-        width: 100vw;
+	<style global>
+		@import "../styles/global.css";
+	</style>
 
-        transition: all 0.5s;
-    }
-
-    header {
-        padding: 1rem;
-        display: flex;
-        justify-content: flex-end;
-    }
-    
-    main {
-        padding: 1rem;
-        aspect-ratio: 16/9;
-        text-align: center;
-    }
-
-    form {
-        display: flex;
-        gap:  0.5rem;
-        padding: 1rem;
-        align-items: center;
-        justify-content: center;
-    }
-
-    input {
-        border-radius: 8px;
-        padding: 12px;
-        color: var(--font-color);
-        background-color: var(--bg-color);
-    }
-
-    .cool-input {
-        border: 2px solid var(--action-color);
-    }
-
-
-    @media(prefers-reduce-motion) {
-        body {
-            transition: none;
-        }
-    }
-
-    @media only screen and (max-width: 1023px) {
-        .centered {
-            margin: 0 auto;
-            max-width: unset;
-        }
-
-        html, body {
-            font-size: 1.25rem;
-        }
-    }
-
-</style>
-
-<html>
-    <head>
-        <title>Juan!</title>
-        <link rel="stylesheet" href="/style/global.css">
-    </head>
-    <body>
-        <header class="centered">
-            <ThemeToggle client:load />
-        </header>
-        <main class="centered">
-            <h1>Hi, my name is Juan, and there is nothing to see here!</h1>
-            <small>Or is it?</small>
-            <form>
-                <input type="file" />
-                <input type="password" class="cool-input" placeholder="Who am I, really?" />
-            </form>
-        </main>
-    </body>
+</head>
+<body>
+	<main>
+		<ThemeToggle client:load />
+	</main>
+</body>
 </html>
-   
