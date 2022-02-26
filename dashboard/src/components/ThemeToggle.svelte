@@ -24,7 +24,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
 </script>
 
 <button id="svelte" on:click={flip} role="switch" aria-checked={darkMode}>
-  <i class={darkMode ? "fa-solid fa-moon" : "fa-solid fa-sun"} />
+  <i class={darkMode ? "fa-solid fa-sun" : "fa-solid fa-moon"} />
 </button>
 
 <style>
@@ -35,5 +35,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css'
     border: none;
     font-size: 2rem;
     background-color: transparent;
+	display: inline-flex;
   }
 </style>

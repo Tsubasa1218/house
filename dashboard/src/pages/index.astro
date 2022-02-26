@@ -1,23 +1,31 @@
 ---
-import ThemeToggle from '../components/ThemeToggle.svelte';
-
+import Navbar from "../components/Navbar.astro";
+import Chart from "../components/Chart.svelte";
 ---
+
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width">
-	<title>Juan!</title>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>Juan!</title>
 
-	<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-	<style global>
-		@import "../styles/global.css";
-	</style>
-
-</head>
-<body>
-	<main>
-		<ThemeToggle client:load />
-	</main>
-</body>
+		<style global>
+			@import "../styles/global.css";
+		</style>
+	</head>
+	<body>
+		<Navbar />
+		<main>
+			<Chart client:load />
+		</main>
+	</body>
 </html>
+
+<style>
+	main {
+		margin: auto;
+		max-width: var(--max-width, 65ch);
+	}
+</style>

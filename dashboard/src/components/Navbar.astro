@@ -1,0 +1,54 @@
+---
+import ThemeToggle from "./ThemeToggle.svelte";
+---
+
+<nav>
+	<ul class="list">
+		<li class="long title">Juan!</li>
+		<li>
+			<ThemeToggle client:load />
+		</li>
+	</ul>
+</nav>
+
+<style>
+	.long {
+		flex-grow: 1;
+	}
+
+	.title {
+		font-weight: bolder;
+		font-size: 1.5rem;
+	}
+
+	@keyframes blink {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+
+	.title::after {
+		content: "|";
+		animation: blink 0.8s infinite;
+	}
+
+	.list {
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		display: flex;
+		align-items: center;
+	}
+
+	nav {
+		padding: var(--medium);
+		max-width: var(--max-width);
+		margin: auto;
+	}
+</style>
