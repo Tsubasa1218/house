@@ -3,21 +3,26 @@ use crate::HouseDBConn;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 
+use crate::responders::to_named_measures;
+
 #[derive(Serialize)]
-pub struct MeasureTypesResponse {
-    pub value: Vec<domains::measure_type::MeasureType>,
+pub struct JSONResponse<T> {
+    pub value: T,
     pub error: &'static str,
 }
 
+pub type MeasureTypes = Vec<domains::measure_type::MeasureType>;
+
 #[get("/measure_types")]
-pub fn get_measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
+pub fn get_measure_types(conn: HouseDBConn) -> Json<JSONResponse<MeasureTypes>> {
     let result = domains::measure_type::select_measure_types(&*conn);
+
     match result {
-        Ok(measures) => Json(MeasureTypesResponse {
+        Ok(measures) => Json(JSONResponse {
             value: measures,
             error: "",
         }),
-        _ => Json(MeasureTypesResponse {
+        _ => Json(JSONResponse {
             value: vec![],
             error: "There was an error :(",
         }),
@@ -25,23 +30,35 @@ pub fn get_measure_types(conn: HouseDBConn) -> Json<MeasureTypesResponse> {
 }
 
 #[derive(Serialize)]
-pub struct MeasuresResponse {
-    pub value: Vec<domains::measures::MeasureValue>,
-    pub error: &'static str,
+pub struct SplitMeasures {
+    pub particles: Vec<f64>,
+    pub co2: Vec<f64>,
+    pub temp: Vec<f64>,
+    pub humidity: Vec<f64>,
 }
 #[get("/measures?<start>&<end>")]
 pub fn get_measures(
     conn: HouseDBConn,
     start: Option<String>,
     end: Option<String>,
-) -> Json<MeasuresResponse> {
+) -> Json<JSONResponse<SplitMeasures>> {
+    let measure_types = match domains::measure_type::select_measure_types(&*conn) {
+        Ok(types) => types,
+        _ => vec![],
+    };
+
     match domains::measures::select_measures(&conn, start, end) {
-        Ok(measures) => Json(MeasuresResponse {
-            value: measures,
+        Ok(measures) => Json(JSONResponse {
+            value: to_named_measures(measures, measure_types),
             error: "",
         }),
-        _ => Json(MeasuresResponse {
-            value: vec![],
+        _ => Json(JSONResponse {
+            value: SplitMeasures {
+                particles: vec![],
+                co2: vec![],
+                temp: vec![],
+                humidity: vec![],
+            },
             error: "There was an error :(",
         }),
     }

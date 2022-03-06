@@ -13,6 +13,7 @@ pub struct HouseDBConn(rusqlite::Connection);
 
 mod actions;
 mod domains;
+mod responders;
 
 fn main() {
     rocket::ignite()
