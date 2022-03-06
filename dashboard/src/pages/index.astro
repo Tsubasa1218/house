@@ -1,5 +1,6 @@
 ---
 import Navbar from "../components/Navbar.astro";
+import Section from "../components/Section.astro";
 import Chart from "../components/Chart.svelte";
 ---
 
@@ -18,7 +19,9 @@ import Chart from "../components/Chart.svelte";
 	<body>
 		<Navbar />
 		<main>
-			<Chart client:load />
+			<Section>
+				<Chart client:load />
+			</Section>
 		</main>
 	</body>
 </html>

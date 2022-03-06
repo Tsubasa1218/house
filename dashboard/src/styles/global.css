@@ -5,18 +5,27 @@
 	--medium: calc(var(--small) * 2);
 	--large: calc(var(--small) * 3);
 	--max-width: 65ch;
+
+	--border-thickness: 5px;
+	--border-radius: 10px;
 }
 
 .light {
-	--bg-color: hsl(0, 100%, 100%);
+	--bg-color: hsl(50, 100%, 75%);
+	--content-bg: hsl(0, 100%, 100%);
 	--font-color: hsl(221, 20%, 15%);
 	--action-color: hsl(218, 89%, 63%);
+
+	--borders: var(--border-thickness) solid var(--font-color);
 }
 
 .dark {
 	--bg-color: hsl(221, 20%, 15%);
+	--content-bg: hsl(221, 20%, 15%);
 	--font-color: hsl(0, 100%, 100%);
 	--action-color: hsl(218, 89%, 63%);
+
+	--borders: var(--border-thickness) solid var(--font-color);
 }
 
 * {

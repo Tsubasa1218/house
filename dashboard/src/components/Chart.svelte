@@ -18,20 +18,15 @@
 	});
 </script>
 
-<section>
-	<fieldset>
-		<legend>A measurement</legend>
-		<figure>
-			<ul>
-				<li>30</li>
-				<li>20</li>
-				<li>10</li>
-				<li>0</li>
-			</ul>
-			<canvas bind:this={canvas}>Canvas not supported</canvas>
-		</figure>
-	</fieldset>
-</section>
+<figure>
+	<ul>
+		<li>30</li>
+		<li>20</li>
+		<li>10</li>
+		<li>0</li>
+	</ul>
+	<canvas bind:this={canvas}>Canvas not supported</canvas>
+</figure>
 
 <style>
 	ul {
